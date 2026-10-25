@@ -123,7 +123,7 @@
         <h1>${esc(p.title)}</h1>
         ${p.summary ? `<p class="dek">${esc(p.summary)}</p>` : ''}
       </header>
-      ${p.cover ? `<figure class="post-cover">${media(p.cover, p.title, { ratio: '16 / 9', fixed: true })}</figure>` : ''}
+      ${p.cover ? `<figure class="post-cover">${media(p.cover, p.title, { ratio: '16 / 9' })}</figure>` : ''}
       <div class="prose">${md(p.body)}</div>
       <nav class="pager" aria-label="다른 글">
         ${older ? `<a class="prev" href="#post-${esc(older.id)}"><span class="lbl">← 이전 글</span><span class="t">${esc(older.title)}</span></a>` : '<span></span>'}

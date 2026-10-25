@@ -206,6 +206,8 @@ main { display: block; padding-block: 2.5rem 4.5rem; }
 .post h1 { font-family: var(--f-display); font-size: clamp(1.9rem, 5vw, 2.7rem); line-height: 1.22; margin: .45rem 0 0; text-wrap: balance; }
 .dek { font-size: 1.12rem; color: var(--soft); margin: .9rem 0 0; }
 .post-cover { margin: 0; }
+.post-cover .media { background: transparent; text-align: center; }
+.post-cover .media img { width: auto; max-width: 100%; max-height: 80vh; margin: 0 auto; border-radius: 3px; }
 .prose { font-size: 1.06rem; line-height: 1.85; max-width: 40rem; min-width: 0; }
 .prose > * { margin: 0 0 1.2em; }
 .prose > :last-child { margin-bottom: 0; }
