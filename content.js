@@ -40,6 +40,19 @@ const SITE = {
    --------------------------------------------------------------------- */
 const POSTS = [
   {
+    id: "seokchon-lake-date",
+    title: "석촌호수 데이트",
+    date: "2026-10-25",
+    tags: ["일상", "사진"],
+    cover: "photos/2026-10-25-seokchon-lake.jpg",
+    summary: "오늘 하루 와이프와 함께 석촌호수 데이트 ♥~",
+    body: `
+오늘 하루 와이프와 함께 석촌호수 데이트 ♥~ 날씨가 너무 좋다
+
+![석촌호수](photos/2026-10-25-seokchon-lake.jpg)
+`,
+  },
+  {
     id: "hello",
     title: "블로그를 시작합니다",
     date: "2026-10-25",
@@ -131,6 +144,7 @@ const PHOTOS = [
   { src: "photos/sample-4.jpg", caption: "저녁 공기 (예시)", date: "2026-10-17", place: "공원" },
   { src: "photos/sample-5.jpg", caption: "흐린 날 산책 (예시)", date: "2026-10-12", place: "" },
   { src: "photos/sample-6.jpg", caption: "해 질 녘 (예시)", date: "2026-10-18", place: "산책길" },
+  { src: "photos/2026-10-25-seokchon-lake.jpg", caption: "오늘 하루 와이프와 함께 석촌호수 데이트 ♥~ 날씨가 너무 좋다", date: "2026-10-25", place: "석촌호수" },
   { src: "photos/2026-10-25-huchu.jpg", caption: "우리 후추", date: "2026-10-25", place: "집 소파에서" },
 ];
 
