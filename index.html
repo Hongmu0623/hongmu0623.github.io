@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>홍무의 기록</title>
+<meta name="description" content="글, 사진, 영상으로 남기는 개인 기록장">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!--BODY-START-->
+<header class="masthead">
+  <div class="wrap">
+    <div class="brand">
+      <p class="eyebrow" id="site-eyebrow">개인 기록장</p>
+      <h1 class="site-title"><a href="#" id="site-title">홍무의 기록</a></h1>
+      <p class="tagline" id="site-tagline"></p>
+    </div>
+    <button class="theme-btn" id="theme-btn" type="button">다크 모드</button>
+  </div>
+</header>
+
+<nav class="nav" aria-label="사이트 메뉴">
+  <div class="wrap nav-inner" id="nav"></div>
+</nav>
+
+<main id="app"></main>
+
+<footer class="foot">
+  <div class="wrap" id="foot"></div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="사진 크게 보기" hidden>
+  <button class="lb-close" id="lb-close" type="button">닫기 ✕</button>
+  <button class="lb-prev" id="lb-prev" type="button" aria-label="이전 사진">‹</button>
+  <figure class="lb-fig">
+    <div class="lb-media" id="lb-media"></div>
+    <figcaption id="lb-cap"></figcaption>
+  </figure>
+  <button class="lb-next" id="lb-next" type="button" aria-label="다음 사진">›</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="content.js"></script>
+<script src="app.js"></script>
+<!--BODY-END-->
+</body>
+</html>
