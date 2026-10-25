@@ -131,6 +131,7 @@ const PHOTOS = [
   { src: "photos/sample-4.jpg", caption: "저녁 공기 (예시)", date: "2026-10-17", place: "공원" },
   { src: "photos/sample-5.jpg", caption: "흐린 날 산책 (예시)", date: "2026-10-12", place: "" },
   { src: "photos/sample-6.jpg", caption: "해 질 녘 (예시)", date: "2026-10-18", place: "산책길" },
+  { src: "2026-10-25-huchu.jpg", caption: "우리 후추", date: "2026-10-25", place: "집 소파에서" },
 ];
 
 /* ---------------------------------------------------------------------
