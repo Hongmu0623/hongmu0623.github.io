@@ -22,6 +22,40 @@
   };
   const ytThumb = (v) => { const id = ytId(v.youtube); return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : ''; };
 
+  /* ---------- 댓글 (Cusdis) ---------- */
+  // content.js의 SITE.comments.cusdisAppId 가 비어 있으면 댓글 칸은 나타나지 않습니다.
+  const cusdisId = (site.comments && site.comments.cusdisAppId) || '';
+  const cusdisQueue = [];
+  let cusdisLoading = false;
+  function whenCusdis(cb) {
+    if (window.renderCusdis) return cb();
+    cusdisQueue.push(cb);
+    if (cusdisLoading) return;
+    cusdisLoading = true;
+    window.CUSDIS_PREVENT_INITIAL_RENDER = true;
+    const sc = document.createElement('script');
+    sc.src = 'https://cusdis.com/js/cusdis.es.js';
+    sc.async = true;
+    sc.onload = () => { while (cusdisQueue.length) cusdisQueue.shift()(); };
+    sc.onerror = () => { cusdisLoading = false; cusdisQueue.length = 0; };
+    document.head.appendChild(sc);
+  }
+  function renderComments(el, pageId, title) {
+    if (!cusdisId || !el) return;
+    Object.assign(el.dataset, {
+      host: 'https://cusdis.com', appId: cusdisId, pageId,
+      pageTitle: title, pageUrl: location.href.split('#')[0] + '#' + pageId,
+      theme: document.documentElement.dataset.theme === 'dark' ||
+        (!document.documentElement.dataset.theme && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light',
+    });
+    whenCusdis(() => window.renderCusdis(el));
+  }
+  const commentsBox = (pageId, title) => cusdisId ? `<section class="comments" aria-label="댓글">
+      <h2>댓글</h2>
+      <p class="comments-note">이름만 적고 남길 수 있어요. 홍무가 확인한 뒤에 화면에 보여요.</p>
+      <div class="comments-thread" data-page-id="${esc(pageId)}" data-title="${esc(title)}"></div>
+    </section>` : '';
+
   // 사진 상자: 파일을 못 찾으면 색 상자와 설명으로 대신 보여 줍니다.
   function media(src, label, o = {}) {
     const cls = ['media'];
@@ -129,6 +163,7 @@
         ${older ? `<a class="prev" href="#post-${esc(older.id)}"><span class="lbl">← 이전 글</span><span class="t">${esc(older.title)}</span></a>` : '<span></span>'}
         ${newer ? `<a class="next" href="#post-${esc(newer.id)}"><span class="lbl">다음 글 →</span><span class="t">${esc(newer.title)}</span></a>` : ''}
       </nav>
+      ${commentsBox('post-' + p.id, p.title)}
     </article>`;
   }
 
@@ -211,6 +246,7 @@
       if (a.dataset.sec === sec) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
     window.scrollTo(0, 0);
+    app.querySelectorAll('.comments-thread').forEach((el) => renderComments(el, el.dataset.pageId, el.dataset.title));
     if (openPhoto >= 0) openLightbox(openPhoto);
   }
 
@@ -229,11 +265,28 @@
   /* ---------- 사진 크게 보기 ---------- */
   const lb = document.getElementById('lightbox');
   let lbIndex = 0, lastFocus = null;
+  const lbBtn = document.getElementById('lb-comments-btn');
+  const lbBox = document.getElementById('lb-comments');
+  const photoKey = (p) => 'photo-' + String(p.src).split('/').pop().replace(/\.[^.]+$/, '');
+  function drawLbComments() {
+    if (lbBox.hidden) return;
+    lbBox.innerHTML = '<p class="comments-note">이름만 적고 남길 수 있어요. 홍무가 확인한 뒤에 화면에 보여요.</p><div class="comments-thread"></div>';
+    renderComments(lbBox.querySelector('.comments-thread'), photoKey(photos[lbIndex]), photos[lbIndex].caption);
+  }
+  if (lbBtn && cusdisId) {
+    lbBtn.hidden = false;
+    lbBtn.addEventListener('click', () => {
+      lbBox.hidden = !lbBox.hidden;
+      lbBtn.textContent = lbBox.hidden ? '댓글 보기' : '댓글 닫기';
+      if (lbBox.hidden) lbBox.innerHTML = ''; else { drawLbComments(); lbBox.scrollIntoView({ behavior: 'smooth', block: 'end' }); }
+    });
+  }
   function drawLightbox() {
     const p = photos[lbIndex];
     document.getElementById('lb-media').innerHTML = media(p.src, p.caption, { ratio: p.ratio || '4 / 3' });
     document.getElementById('lb-cap').innerHTML =
       `<span>${esc(p.caption)}</span> <span class="shot-meta">${fmt(p.date)}${p.place ? ' · ' + esc(p.place) : ''} · ${lbIndex + 1} / ${photos.length}</span>`;
+    drawLbComments();
   }
   function openLightbox(i) {
     if (!photos[i]) return;
@@ -243,6 +296,7 @@
   }
   function closeLightbox() {
     lb.hidden = true; document.body.style.overflow = '';
+    if (lbBox) { lbBox.hidden = true; lbBox.innerHTML = ''; if (lbBtn) lbBtn.textContent = '댓글 보기'; }
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
   const step = (d) => { lbIndex = (lbIndex + d + photos.length) % photos.length; drawLightbox(); };

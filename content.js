@@ -20,6 +20,10 @@ const SITE = {
 제 일상을 기록하는 공간입니다. 행복한 네 가족과 하루를 보여드립니당😉
 `,
 
+  // 댓글(Cusdis). cusdis.com 에서 사이트를 만들고 받은 App ID를 따옴표 안에 붙여 넣으세요.
+  // 비워 두면 댓글 칸이 나타나지 않습니다.
+  comments: { cusdisAppId: "" },
+
   // 소개 페이지와 바닥글에 표시할 링크. 필요 없으면 줄을 지우세요.
   links: [
     { label: "YouTube", url: "https://www.youtube.com/@shinpyung8703" },

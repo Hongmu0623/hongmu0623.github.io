@@ -329,3 +329,18 @@ main { display: block; padding-block: 2.5rem 5rem; }
   border: 1px solid rgba(238, 242, 246, .35); border-radius: 999px; padding: .65rem 1rem; cursor: pointer;
 }
 .lb-prev:hover, .lb-next:hover, .lb-close:hover { border-color: var(--veil-ink); }
+
+/* ---------- 댓글 ---------- */
+.comments { border-top: 1.5px dashed var(--rule); padding-top: 1.6rem; display: grid; gap: .6rem; }
+.comments h2 { font-size: 1.5rem; margin: 0; }
+.comments-note { margin: 0; color: var(--soft); font-size: .95rem; }
+.comments-thread { min-height: 4rem; }
+.comments-thread iframe { width: 100%; border: 0; }
+.lightbox { overflow-y: auto; }
+.lb-comments-btn {
+  font: 400 .95rem/1 var(--f-body); color: var(--veil-ink); background: transparent;
+  border: 1px solid rgba(238, 242, 246, .35); border-radius: 999px; padding: .6rem 1.1rem; cursor: pointer;
+}
+.lb-comments-btn:hover { border-color: var(--veil-ink); }
+.lb-comments { width: min(100%, 38rem); display: grid; gap: .6rem; text-align: left; }
+.lb-comments .comments-note { color: inherit; opacity: .75; }
