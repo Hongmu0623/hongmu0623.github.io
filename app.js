@@ -148,7 +148,7 @@
       <div class="cards">${videos.map((v, i) => `<article class="card"><a href="#video-${i}">
         ${media(ytThumb(v), v.title, { ratio: '16 / 9', fixed: true, play: true })}
         <div class="card-body"><time>${fmt(v.date)}</time><h3>${esc(v.title)}</h3>${v.note ? `<p>${esc(v.note)}</p>` : ''}</div>
-      </a></article>`).join('')}</div>
+      </a></article>`).join('') || '<p class="empty">아직 올린 영상이 없습니다.</p>'}</div>
     </section>`;
   }
 
