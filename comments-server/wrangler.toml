@@ -1,0 +1,12 @@
+# 컴퓨터에서 wrangler 명령으로 올릴 때만 쓰는 설정입니다. (대시보드에서 직접 붙여넣는 방법이면 필요 없어요)
+name = "hongmu-comments"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+ALLOWED_ORIGIN = "https://hongmu0623.github.io"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "comments"
+database_id = "여기에-D1-데이터베이스-ID"

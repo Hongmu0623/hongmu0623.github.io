@@ -22,39 +22,99 @@
   };
   const ytThumb = (v) => { const id = ytId(v.youtube); return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : ''; };
 
-  /* ---------- 댓글 (Cusdis) ---------- */
-  // content.js의 SITE.comments.cusdisAppId 가 비어 있으면 댓글 칸은 나타나지 않습니다.
-  const cusdisId = (site.comments && site.comments.cusdisAppId) || '';
-  const cusdisQueue = [];
-  let cusdisLoading = false;
-  function whenCusdis(cb) {
-    if (window.renderCusdis) return cb();
-    cusdisQueue.push(cb);
-    if (cusdisLoading) return;
-    cusdisLoading = true;
-    window.CUSDIS_PREVENT_INITIAL_RENDER = true;
-    const sc = document.createElement('script');
-    sc.src = 'https://cusdis.com/js/cusdis.es.js';
-    sc.async = true;
-    sc.onload = () => { while (cusdisQueue.length) cusdisQueue.shift()(); };
-    sc.onerror = () => { cusdisLoading = false; cusdisQueue.length = 0; };
-    document.head.appendChild(sc);
+  /* ---------- 댓글 (직접 만든 댓글 서버) ---------- */
+  // content.js의 SITE.comments.apiUrl 이 비어 있으면 댓글 칸은 나타나지 않습니다.
+  const apiUrl = String((site.comments && site.comments.apiUrl) || '').replace(/\/+$/, '');
+  async function api(path, opts) {
+    let r;
+    try { r = await fetch(apiUrl + path, opts); } catch (e) { throw new Error('서버에 연결할 수 없어요. 잠시 후 다시 해 주세요.'); }
+    let j = {};
+    try { j = await r.json(); } catch (e) { /* 본문 없음 */ }
+    if (!r.ok) throw new Error(j.error || '잠시 후 다시 해 주세요.');
+    return j;
   }
-  function renderComments(el, pageId, title) {
-    if (!cusdisId || !el) return;
-    Object.assign(el.dataset, {
-      host: 'https://cusdis.com', appId: cusdisId, pageId,
-      pageTitle: title, pageUrl: location.href.split('#')[0] + '#' + pageId,
-      theme: document.documentElement.dataset.theme === 'dark' ||
-        (!document.documentElement.dataset.theme && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light',
+  const fmtTime = (ts) => { const d = new Date(ts * 1000); return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+  const COMMENT_NOTE = '이름만 적고 남길 수 있어요. 홍무가 확인한 뒤에 화면에 보여요.';
+  function renderComments(el, pageId) {
+    if (!apiUrl || !el) return;
+    let saved = '';
+    try { saved = localStorage.getItem('comment-name') || ''; } catch (e) { /* 무시 */ }
+    el.innerHTML = `<ol class="c-list" aria-live="polite"></ol>
+      <form class="c-form" novalidate>
+        <label class="c-field"><span>이름</span><input name="name" maxlength="20" autocomplete="nickname" value="${esc(saved)}"></label>
+        <label class="c-field"><span>댓글</span><textarea name="body" rows="3" maxlength="500"></textarea></label>
+        <input class="c-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="c-row"><button class="c-btn" type="submit">댓글 남기기</button><span class="c-msg" role="status"></span></div>
+      </form>`;
+    const list = el.querySelector('.c-list'), form = el.querySelector('.c-form'), msg = el.querySelector('.c-msg'), btn = el.querySelector('.c-btn');
+    api('/comments?page=' + encodeURIComponent(pageId)).then((j) => {
+      list.innerHTML = j.comments.map((c) => `<li class="c-item"><p class="c-meta"><strong>${esc(c.name)}</strong> <time>${fmtTime(c.created_at)}</time></p><p class="c-body">${esc(c.body)}</p></li>`).join('');
+    }).catch(() => { list.innerHTML = '<li class="c-empty">댓글을 불러오지 못했어요.</li>'; });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = form.name.value.trim(), body = form.body.value.trim();
+      if (!name || !body) { msg.textContent = '이름과 댓글을 모두 적어 주세요.'; msg.dataset.kind = 'err'; return; }
+      btn.disabled = true; msg.textContent = '보내는 중…'; msg.dataset.kind = '';
+      try {
+        await api('/comments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ page: pageId, name, body, website: form.website.value }) });
+        try { localStorage.setItem('comment-name', name); } catch (e2) { /* 무시 */ }
+        form.body.value = '';
+        msg.textContent = '고마워요! 홍무가 확인한 뒤에 보여요.'; msg.dataset.kind = 'ok';
+      } catch (err) { msg.textContent = err.message; msg.dataset.kind = 'err'; }
+      btn.disabled = false;
     });
-    whenCusdis(() => window.renderCusdis(el));
   }
-  const commentsBox = (pageId, title) => cusdisId ? `<section class="comments" aria-label="댓글">
+  const commentsBox = (pageId) => apiUrl ? `<section class="comments" aria-label="댓글">
       <h2>댓글</h2>
-      <p class="comments-note">이름만 적고 남길 수 있어요. 홍무가 확인한 뒤에 화면에 보여요.</p>
-      <div class="comments-thread" data-page-id="${esc(pageId)}" data-title="${esc(title)}"></div>
+      <p class="comments-note">${COMMENT_NOTE}</p>
+      <div class="comments-thread" data-page-id="${esc(pageId)}"></div>
     </section>` : '';
+
+  /* ---------- 관리 화면 (#admin): 댓글 승인·삭제 ---------- */
+  function viewAdmin() {
+    return `<article class="wrap narrow post"><header><h1>댓글 관리</h1></header>
+      ${apiUrl ? `<div id="adm"></div>` : '<p>content.js의 <code>comments.apiUrl</code>을 먼저 채워 주세요.</p>'}
+    </article>`;
+  }
+  function initAdmin() {
+    const box = document.getElementById('adm');
+    if (!box) return;
+    let pw = '', tab = 'pending';
+    try { pw = sessionStorage.getItem('adm-pw') || ''; } catch (e) { /* 무시 */ }
+    const H = () => ({ Authorization: 'Bearer ' + pw });
+    function login(note) {
+      box.innerHTML = `<form class="c-form" id="adm-login"><label class="c-field"><span>관리 비밀번호</span><input type="password" name="pw" autocomplete="current-password"></label>
+        <div class="c-row"><button class="c-btn" type="submit">들어가기</button><span class="c-msg" data-kind="err">${esc(note || '')}</span></div></form>`;
+      box.querySelector('form').addEventListener('submit', (e) => {
+        e.preventDefault(); pw = e.target.pw.value;
+        try { sessionStorage.setItem('adm-pw', pw); } catch (e2) { /* 무시 */ }
+        load();
+      });
+    }
+    async function load() {
+      try {
+        const j = await api('/admin/comments?status=' + tab, { headers: H() });
+        box.innerHTML = `<div class="chips"><button class="chip" data-tab="pending" aria-pressed="${tab === 'pending'}">기다리는 댓글 ${j.counts.pending}</button><button class="chip" data-tab="approved" aria-pressed="${tab === 'approved'}">보이는 댓글 ${j.counts.approved}</button></div>
+          <ul class="adm-list">${j.comments.map((c) => `<li class="c-item" data-id="${c.id}">
+            <p class="c-meta"><strong>${esc(c.name)}</strong> <time>${fmtTime(c.created_at)}</time> · <span>${esc(c.page)}</span></p>
+            <p class="c-body">${esc(c.body)}</p>
+            <p class="adm-btns">${c.status === 'pending' ? '<button class="c-btn" data-act="approve">승인</button>' : ''}<button class="c-btn c-danger" data-act="delete">삭제</button></p></li>`).join('') || '<li class="c-empty">댓글이 없어요.</li>'}</ul>`;
+      } catch (e) { if (/비밀번호/.test(e.message)) { try { sessionStorage.removeItem('adm-pw'); } catch (e2) { /* 무시 */ } login(pw ? e.message : ''); } else box.textContent = e.message; }
+    }
+    box.addEventListener('click', async (e) => {
+      const t = e.target.closest('[data-tab]');
+      if (t) { tab = t.dataset.tab; load(); return; }
+      const act = e.target.closest('[data-act]');
+      if (!act) return;
+      const id = act.closest('[data-id]').dataset.id;
+      if (act.dataset.act === 'delete' && !confirm('이 댓글을 삭제할까요?')) return;
+      try {
+        await api(act.dataset.act === 'approve' ? `/admin/comments/${id}/approve` : `/admin/comments/${id}`, { method: act.dataset.act === 'approve' ? 'POST' : 'DELETE', headers: H() });
+        load();
+      } catch (err) { alert(err.message); }
+    });
+    if (pw) load(); else login('');
+  }
 
   // 사진 상자: 파일을 못 찾으면 색 상자와 설명으로 대신 보여 줍니다.
   function media(src, label, o = {}) {
@@ -163,7 +223,7 @@
         ${older ? `<a class="prev" href="#post-${esc(older.id)}"><span class="lbl">← 이전 글</span><span class="t">${esc(older.title)}</span></a>` : '<span></span>'}
         ${newer ? `<a class="next" href="#post-${esc(newer.id)}"><span class="lbl">다음 글 →</span><span class="t">${esc(newer.title)}</span></a>` : ''}
       </nav>
-      ${commentsBox('post-' + p.id, p.title)}
+      ${commentsBox('post-' + p.id)}
     </article>`;
   }
 
@@ -230,6 +290,7 @@
     else if (h === 'videos') { html = viewVideos(); sec = 'videos'; }
     else if ((m = h.match(/^video-(\d+)$/))) { html = viewVideo(+m[1]); sec = 'videos'; }
     else if (h === 'about') { html = viewAbout(); sec = 'about'; }
+    else if (h === 'admin') html = viewAdmin();
     else html = viewMissing();
 
     app.innerHTML = html;
@@ -246,7 +307,8 @@
       if (a.dataset.sec === sec) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
     window.scrollTo(0, 0);
-    app.querySelectorAll('.comments-thread').forEach((el) => renderComments(el, el.dataset.pageId, el.dataset.title));
+    app.querySelectorAll('.comments-thread').forEach((el) => renderComments(el, el.dataset.pageId));
+    if (h === 'admin') initAdmin();
     if (openPhoto >= 0) openLightbox(openPhoto);
   }
 
@@ -270,10 +332,10 @@
   const photoKey = (p) => 'photo-' + String(p.src).split('/').pop().replace(/\.[^.]+$/, '');
   function drawLbComments() {
     if (lbBox.hidden) return;
-    lbBox.innerHTML = '<p class="comments-note">이름만 적고 남길 수 있어요. 홍무가 확인한 뒤에 화면에 보여요.</p><div class="comments-thread"></div>';
-    renderComments(lbBox.querySelector('.comments-thread'), photoKey(photos[lbIndex]), photos[lbIndex].caption);
+    lbBox.innerHTML = `<p class="comments-note">${COMMENT_NOTE}</p><div class="comments-thread"></div>`;
+    renderComments(lbBox.querySelector('.comments-thread'), photoKey(photos[lbIndex]));
   }
-  if (lbBtn && cusdisId) {
+  if (lbBtn && apiUrl) {
     lbBtn.hidden = false;
     lbBtn.addEventListener('click', () => {
       lbBox.hidden = !lbBox.hidden;

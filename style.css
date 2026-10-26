@@ -344,3 +344,33 @@ main { display: block; padding-block: 2.5rem 5rem; }
 .lb-comments-btn:hover { border-color: var(--veil-ink); }
 .lb-comments { width: min(100%, 38rem); display: grid; gap: .6rem; text-align: left; }
 .lb-comments .comments-note { color: inherit; opacity: .75; }
+
+/* 댓글 목록·작성칸 */
+.c-list, .adm-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .9rem; }
+.c-item { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: .85rem 1rem; color: var(--ink); }
+.c-meta { margin: 0; font-size: .92rem; color: var(--soft); }
+.c-meta strong { font-family: var(--f-display); font-weight: 400; font-size: 1.05rem; color: var(--ink); }
+.c-body { margin: .25rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.c-empty { color: var(--soft); font-size: .95rem; }
+.c-form { display: grid; gap: .7rem; margin-top: .4rem; }
+.c-field { display: grid; gap: .25rem; font-size: .95rem; }
+.c-field input, .c-field textarea {
+  font: 400 1rem/1.6 var(--f-body); color: var(--ink); background: var(--card);
+  border: 1px solid var(--rule); border-radius: 12px; padding: .65rem .85rem; width: 100%;
+}
+.c-field input:focus, .c-field textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.c-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.c-row { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem; }
+.c-btn {
+  font: 400 1rem/1 var(--f-display); color: var(--mark-ink); background: var(--mark);
+  border: 0; border-radius: 999px; padding: .75rem 1.2rem; cursor: pointer;
+}
+.c-btn:hover { filter: brightness(.96); }
+.c-btn:disabled { opacity: .6; cursor: default; }
+.c-danger { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+.c-msg { font-size: .95rem; color: var(--soft); }
+.c-msg[data-kind="ok"] { color: var(--accent); }
+.c-msg[data-kind="err"] { color: #C0392B; }
+.adm-btns { display: flex; gap: .5rem; margin: .6rem 0 0; }
+.lb-comments .c-item, .lb-comments .c-field input, .lb-comments .c-field textarea { color: var(--ink); }
+.lb-comments .c-field span, .lb-comments .c-msg { color: inherit; }
