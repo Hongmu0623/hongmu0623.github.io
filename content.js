@@ -17,18 +17,13 @@ const SITE = {
 
   // 소개 페이지 본문 (마크다운 사용 가능)
   about: `
-안녕하세요, **홍무**입니다.
-
-이곳은 제 일상과 생각을 모아 두는 개인 기록장입니다.
-글은 천천히 쓰고, 사진은 그날그날 고르고, 영상은 짧게 남깁니다.
-
-> 이 문단은 예시입니다. content.js 맨 위의 \`about\` 부분을 고쳐서 자기소개로 바꾸세요.
+제 일상을 기록하는 공간입니다. 행복한 네 가족과 하루를 보여드립니당😉
 `,
 
   // 소개 페이지와 바닥글에 표시할 링크. 필요 없으면 줄을 지우세요.
   links: [
     { label: "YouTube", url: "https://www.youtube.com/" },
-    { label: "Instagram", url: "https://www.instagram.com/" },
+    { label: "Instagram", url: "https://www.instagram.com/jhg623?obrf=ZWcxcG43MTl6cmts&utm_source=qr" },
   ],
 };
 
