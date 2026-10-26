@@ -162,6 +162,7 @@ photos 폴더에 넣은 사진은 이렇게 본문에 넣습니다.
    사진은 가로 1600px 정도로 줄여서 올리면 사이트가 빨라집니다.
    --------------------------------------------------------------------- */
 const PHOTOS = [
+  { src: "photos/2026-10-26-cookie.jpg", caption: "우리 쿠키", date: "2026-10-26", place: "" },
   { src: "photos/sample-1.jpg", caption: "출근길 하늘 (예시)", date: "2026-10-23", place: "집 앞" },
   { src: "photos/sample-2.jpg", caption: "오후의 창가 (예시)", date: "2026-10-21", place: "카페" },
   { src: "photos/sample-3.jpg", caption: "주말 아침 (예시)", date: "2026-10-19", place: "" },
