@@ -22,7 +22,7 @@ const SITE = {
 
   // 소개 페이지와 바닥글에 표시할 링크. 필요 없으면 줄을 지우세요.
   links: [
-    { label: "YouTube", url: "https://www.youtube.com/" },
+    { label: "YouTube", url: "https://www.youtube.com/@shinpyung8703" },
     { label: "Instagram", url: "https://www.instagram.com/jhg623?obrf=ZWcxcG43MTl6cmts&utm_source=qr" },
   ],
 };
