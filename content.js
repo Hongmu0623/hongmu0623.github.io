@@ -35,14 +35,20 @@ const SITE = {
 /* ---------------------------------------------------------------------
    글 (블로그)
    id     : 주소에 쓰이는 이름. 영어 소문자, 숫자, 하이픈(-)만. 글마다 달라야 함
+   category: 분류. 일상 / 취미생활 / 업무관련 중 하나 (아래 CATEGORIES)
    cover  : 대표 사진 (없으면 "" 로 비워 두기)
    body   : 본문. 마크다운으로 씁니다. 백틱(`) 두 개 사이에 쓰면 줄바꿈 그대로 들어갑니다.
    --------------------------------------------------------------------- */
+/* 글 분류(섹션). 글마다 category 에 아래 이름 중 하나를 적으면 됩니다.
+   분류를 바꾸거나 늘리려면 이 목록을 고치세요. (순서대로 화면에 나타납니다) */
+const CATEGORIES = ["일상", "취미생활", "업무관련"];
+
 const POSTS = [
   {
     id: "lunch-2026-10-29",
     title: "10월 29일 점심식사",
     date: "2026-10-29",
+    category: "일상",
     tags: ["일상", "음식"],
     cover: "photos/2026-10-29-lunch.jpg",
     summary: "돈까스안심 맛있당.. 가디 맛집파는중 ㅋㅋㅋ",
@@ -54,6 +60,7 @@ const POSTS = [
     id: "lunch-coffee-2026-10-28",
     title: "10.28일 점심식사와 커피",
     date: "2026-10-28",
+    category: "일상",
     tags: ["일상", "음식"],
     cover: "photos/2026-10-28-lunch.jpg",
     summary: "교육후 점심식사와 커피한잔 ㅎㅎ",
@@ -67,6 +74,7 @@ const POSTS = [
     id: "morning-commute-2026-10-27",
     title: "2026년 10월 27일 출근길",
     date: "2026-10-27",
+    category: "일상",
     tags: ["일상", "출근길"],
     cover: "photos/2026-10-27-commute.jpg",
     summary: "춥댜..가을이왔엉 ㅎㅎ",
@@ -78,6 +86,7 @@ const POSTS = [
     id: "commute-2026-10-26",
     title: "10.26일 퇴근!!",
     date: "2026-10-26",
+    category: "일상",
     tags: ["일상", "회사"],
     cover: "photos/2026-10-26-commute.jpg",
     summary: "퇴근중 ㅠㅠ 오늘은 야근을 한시간했당..",
@@ -91,6 +100,7 @@ const POSTS = [
     id: "dinner-2026-10-25",
     title: "10.25일 저녁식사😉",
     date: "2026-10-25",
+    category: "일상",
     tags: ["일상", "음식"],
     cover: "photos/2026-10-25-dinner.jpg",
     summary: "맛있는 해물탕&참치초밥 저녁~><",
@@ -104,6 +114,7 @@ const POSTS = [
     id: "seokchon-lake-date",
     title: "석촌호수 데이트",
     date: "2026-10-25",
+    category: "일상",
     tags: ["일상", "사진"],
     cover: "photos/2026-10-25-seokchon-lake.jpg",
     summary: "오늘 하루 와이프와 함께 석촌호수 데이트 ♥~",

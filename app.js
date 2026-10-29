@@ -184,24 +184,25 @@
       </section>` : ''}`;
   }
 
-  let activeTag = '';
+  const cats = (typeof CATEGORIES !== 'undefined' && CATEGORIES.length ? CATEGORIES : [...new Set(posts.map((p) => p.category).filter(Boolean))]);
+  let activeCat = '';
   function postCards() {
-    const list = activeTag ? posts.filter((p) => (p.tags || []).includes(activeTag)) : posts;
+    const list = activeCat ? posts.filter((p) => p.category === activeCat) : posts;
     return list.map((p) => `<article class="card"><a href="#post-${esc(p.id)}">
       ${media(p.cover, p.title, { ratio: '16 / 10', fixed: true })}
       <div class="card-body">
         <time>${fmt(p.date)}</time>
         <h3>${esc(p.title)}</h3>
         ${p.summary ? `<p>${esc(p.summary)}</p>` : ''}
-        <ul class="tags">${(p.tags || []).map((t) => `<li>#${esc(t)}</li>`).join('')}</ul>
-      </div></a></article>`).join('') || '<p class="empty">이 태그의 글이 아직 없습니다.</p>';
+        <ul class="tags">${p.category ? `<li class="cat">${esc(p.category)}</li>` : ''}${(p.tags || []).filter((t) => t !== p.category).map((t) => `<li>#${esc(t)}</li>`).join('')}</ul>
+      </div></a></article>`).join('') || '<p class="empty">이 분류의 글이 아직 없습니다.</p>';
   }
   function viewPosts() {
-    const tags = [...new Set(posts.flatMap((p) => p.tags || []))];
-    const chip = (t, label) => `<button class="chip" type="button" data-tag="${esc(t)}" aria-pressed="${activeTag === t}">${esc(label)}</button>`;
+    const count = (c) => (c ? posts.filter((p) => p.category === c).length : posts.length);
+    const chip = (c, label) => `<button class="chip" type="button" data-cat="${esc(c)}" aria-pressed="${activeCat === c}">${esc(label)}<span class="n-count">${count(c)}</span></button>`;
     return `<section class="wrap block">
       <div class="sec-row"><h2 class="sec">글 <span class="count">${posts.length}편</span></h2></div>
-      ${tags.length ? `<div class="chips" id="chips">${chip('', '전체')}${tags.map((t) => chip(t, '#' + t)).join('')}</div>` : ''}
+      ${cats.length ? `<div class="chips" id="chips">${chip('', '전체')}${cats.map((c) => chip(c, c)).join('')}</div>` : ''}
       <div class="cards" id="cards">${postCards()}</div>
     </section>`;
   }
@@ -213,7 +214,7 @@
     return `<article class="wrap narrow post">
       <a class="back" href="#posts">← 글 목록</a>
       <header>
-        <p class="meta"><time>${fmt(p.date)}</time>${(p.tags || []).map((t) => ` · #${esc(t)}`).join('')}</p>
+        <p class="meta"><time>${fmt(p.date)}</time>${p.category ? ` · ${esc(p.category)}` : ''}${(p.tags || []).filter((t) => t !== p.category).map((t) => ` · #${esc(t)}`).join('')}</p>
         <h1>${esc(p.title)}</h1>
         ${p.summary ? `<p class="dek">${esc(p.summary)}</p>` : ''}
       </header>
@@ -283,7 +284,7 @@
     const h = decodeURIComponent(location.hash.replace(/^#/, ''));
     let m, html, sec = '', openPhoto = -1;
     if (!h) html = viewHome();
-    else if (h === 'posts') { html = viewPosts(); sec = 'posts'; }
+    else if (h === 'posts' || /^posts-/.test(h)) { activeCat = h === 'posts' ? '' : h.slice(6); if (!cats.includes(activeCat)) activeCat = ''; html = viewPosts(); sec = 'posts'; }
     else if ((m = h.match(/^post-(.+)$/))) { html = viewPost(m[1]); sec = 'posts'; }
     else if (h === 'photos') { html = viewPhotos(); sec = 'photos'; }
     else if ((m = h.match(/^photo-(\d+)$/))) { html = viewPhotos(); sec = 'photos'; openPhoto = +m[1]; }
@@ -315,9 +316,10 @@
   app.addEventListener('click', (e) => {
     const chip = e.target.closest('.chip');
     if (chip) {
-      activeTag = chip.dataset.tag;
-      document.querySelectorAll('#chips .chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.tag === activeTag)));
+      activeCat = chip.dataset.cat;
+      document.querySelectorAll('#chips .chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.cat === activeCat)));
       document.getElementById('cards').innerHTML = postCards();
+      try { history.replaceState(null, '', activeCat ? '#posts-' + encodeURIComponent(activeCat) : '#posts'); } catch (err) { /* 무시 */ }
       return;
     }
     const shot = e.target.closest('.shot-btn');
