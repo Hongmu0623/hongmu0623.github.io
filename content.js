@@ -130,6 +130,7 @@ const POSTS = [
    사진은 가로 1600px 정도로 줄여서 올리면 사이트가 빨라집니다.
    --------------------------------------------------------------------- */
 const PHOTOS = [
+  { src: "photos/2026-10-29-night-walk.jpg", caption: "달밤에 산책✨🌝", date: "2026-10-29", place: "" },
   { src: "photos/2026-10-26-cookie.jpg", caption: "우리 쿠키", date: "2026-10-26", place: "" },
   { src: "photos/2026-10-25-seokchon-lake.jpg", caption: "오늘 하루 와이프와 함께 석촌호수 데이트 ♥~ 날씨가 너무 좋다", date: "2026-10-25", place: "석촌호수" },
   { src: "photos/2026-10-25-huchu.jpg", caption: "우리 후추", date: "2026-10-25", place: "집 소파에서" },
