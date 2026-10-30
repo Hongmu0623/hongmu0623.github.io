@@ -45,6 +45,20 @@ const CATEGORIES = ["일상", "취미생활", "업무관련"];
 
 const POSTS = [
   {
+    id: "big-coffee-2026-10-30",
+    title: "10월 30일 커피",
+    date: "2026-10-30",
+    category: "일상",
+    tags: ["일상", "커피"],
+    cover: "photos/2026-10-30-coffee.jpg",
+    summary: "커피사이즈를 잘못주문했다..넘크다",
+    body: `
+커피사이즈를 잘못주문했다..넘크다
+
+1L정도 플러스사이즈로 주문햇더닝 배터질것같닼ㅋㅋ
+`,
+  },
+  {
     id: "dinner-2026-10-29",
     title: "2026년 10월 29일 저녁",
     date: "2026-10-29",
