@@ -45,6 +45,22 @@ const CATEGORIES = ["일상", "취미생활", "업무관련"];
 
 const POSTS = [
   {
+    id: "catia-assembly-2026-10-30",
+    title: "10월 30일 Assembly Design!!",
+    date: "2026-10-30",
+    category: "업무관련",
+    tags: ["업무", "CATIA"],
+    cover: "photos/2026-10-30-catia-assembly.jpg",
+    summary: "파트모델링으로 만든 파트를 구속조건으로 조립하는 방법을 배웠다.",
+    body: `
+파트모델링으로 생성한 파트를 구속조건으로 조립하는 모델링을 배웠다.
+
+홀과 파트를 조립할 때 동심 조건과 컨택 조건을 주고, 앵글이나 평행 조건을 주면 조립할 수 있었다.
+
+시간이 좀 걸렸지만 완성할 수 있었고, 이후 프로덕트 디자인에 꼭 필요한 과정이다 ㅎㅎ
+`,
+  },
+  {
     id: "catia-part-modeling-2026-10-29",
     title: "10월 29일 CATIA 3D 파트모델링!!",
     date: "2026-10-29",
