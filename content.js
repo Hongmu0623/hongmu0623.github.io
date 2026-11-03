@@ -45,6 +45,18 @@ const CATEGORIES = ["일상", "취미생활", "업무관련"];
 
 const POSTS = [
   {
+    id: "huchu-flower-2026-11-03",
+    title: "꽃을 뜯는 여자 정후추❤️",
+    date: "2026-11-03",
+    category: "일상",
+    tags: ["일상", "후추"],
+    cover: "photos/2026-11-03-huchu-flower.jpg",
+    summary: "꽃을 뜯는 여자 정후추..❤️",
+    body: `
+꽃을 뜯는 여자 정후추..❤️
+`,
+  },
+  {
     id: "catia-assembly-2026-10-30",
     title: "10월 30일 Assembly Design!!",
     date: "2026-10-30",
